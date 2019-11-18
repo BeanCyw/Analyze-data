@@ -1,2 +1,2 @@
 # Analyze data of products in my grocery store
-to simulate your financial situations
+To Analyze data of products in my grocery store to solve a problem or improve my store
