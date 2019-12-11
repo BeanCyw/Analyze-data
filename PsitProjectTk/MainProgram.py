@@ -58,7 +58,12 @@ def product():
     clicked = StringVar()
 
     def updateCategory():
+        global newCategory
         newCategory = newCate.get()
+        set_cate()
+        addCate.destroy()
+
+    def set_cate():
         global categoryOptions
         categoryFromDb = "SELECT * FROM products "
         mycursor.execute(categoryFromDb)
@@ -69,17 +74,20 @@ def product():
             categoryOptions = [cate[2] for cate in categoryData]
 
         if newCategory != None:
+            categoryOptions = set(categoryOptions)
+            categoryOptions = list(categoryOptions)
             categoryOptions.insert(0, newCategory)
 
+        print(categoryOptions)
         clicked = StringVar()
         categoryShow()
     
     def categoryShow():
         global categoryOptions
+        category_shw = categoryOptions
         categoryOptions = set(categoryOptions)
         categoryOptions = list(categoryOptions)
-        # print(categoryOptions)
-        clicked.set(categoryOptions[0])
+        clicked.set(category_shw[0])
         category = OptionMenu(productWin, clicked, *categoryOptions)
         category.configure(width=10, justify=CENTER, font=("Kanit", 13),fg='azure',bg='gray20',borderwidth=0)
         category.grid(row=1,column=4,columnspan=1,sticky='w')
@@ -87,6 +95,7 @@ def product():
     categoryShow()
 
     def addCategory():
+        global addCate
         addCate = Toplevel()
         addCate.title("AddCategory")
         Label(addCate, text="Add New Category",font=("Kanit", 13)).pack(side=LEFT)
@@ -95,48 +104,59 @@ def product():
         newCate.pack(side=LEFT)
         submitAddCate = Button(addCate, text='Submit', command=updateCategory,font=("Kanit", 13)).pack()
 
+    def edit_cate_to_db(text):
+        sql = "UPDATE products SET category = '" + eCate.get() + "'WHERE category= '" + text + "'"
+        print(sql)
+        mycursor.execute(sql)
+        mydb.commit()
+        edit_show.destroy()
+        edit_cate.destroy()
+        edit_catagory()
+        set_cate()
+
+    def edit_cate_command():
+        global edit_cate
+        edit_cate = Toplevel()
+        edit_cate.title("Edit_cate")
+        global eCate
+        Label(edit_cate, text="Edit Category",font=("Kanit", 13)).pack(side=LEFT)
+        eCate = Entry(edit_cate, width=20,font=("Kanit", 13))
+        text = (listbox.get(ACTIVE)).lstrip(" ")
+        eCate.insert(0, text)
+        eCate.pack(side=LEFT)
+        submitEditCate = Button(edit_cate, text='Submit', command=lambda : edit_cate_to_db(text,),font=("Kanit", 13)).pack()
 
     def edit_catagory():
-        categoryFromDb = "SELECT productsName FROM products "
-        mycursor.execute(categoryFromDb)
-        nameData = mycursor.fetchall()
-        global nameShow
-
+        global edit_show
         edit_show = Toplevel()
         edit_show.title("Edit")
-        edit_show.geometry("300x300")
+        edit_show.geometry("500x300")
+        list_cate_shw()
+        
+    def list_cate_shw():
         scrollbar = Scrollbar(edit_show)
         scrollbar.pack(side=RIGHT, fill=Y)
 
+        global listbox
         listbox = Listbox(edit_show, yscrollcommand=scrollbar.set,font=("Kanit", 12))
-        productFromDb = "SELECT * FROM products "
-        mycursor.execute(productFromDb)
-        productData = mycursor.fetchall()
+        productData = get_cate_form_db()
         number_of_pro= 0
-        for data in productData:
+        listbox.insert(END, "คลิกเลือกประเภทสินค้าที่จะแก้ไข  ")
+        for data in set(productData):
             number_of_pro+= 1
-            listbox.insert(END, "  สินค้าชิ้นที่  " + str(number_of_pro))
-            id_pro = tabify("        รหัสสินค้า :       %d"%(data[0]))
-            name_pro = tabify("        ชื่อสินค้า :         %s"%(data[1]))
-            cate_pro = tabify("        ประเภทสินค้า :    %s"%(data[2]))
-            buy_pro = tabify("        ราคาซื้อ :          %.2f"%(data[3]))
-            sell_pro = tabify("        ราคาขาย :         %.2f"%(data[4]))
-            total = id_pro+name_pro+cate_pro+buy_pro+sell_pro
-            listbox.insert(END, id_pro)
-            listbox.insert(END, name_pro)
-            listbox.insert(END, cate_pro)
-            listbox.insert(END, buy_pro)
-            listbox.insert(END, sell_pro)
+            cate_shw = "      %s"%(data)
+            # listbox.insert(END, "  ประเภทสินค้าที่  " + str(number_of_pro))
+            listbox.insert(END, cate_shw)
         listbox.pack(side=LEFT, fill=BOTH, expand=TRUE)
+        Button(edit_show,text="แก้ไขประเภทสินค้า",command= edit_cate_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
 
         scrollbar.config(command=listbox.yview)
 
-
-    def tabify(s, tabsize = 4):
-        ln = int(((len(s)/tabsize)+1)*tabsize)
-        return s.ljust(ln)
-
-
+    def get_cate_form_db():
+        productFromDb = "SELECT category FROM products "
+        mycursor.execute(productFromDb)
+        productData = mycursor.fetchall()
+        return productData
 
     categoryAddBtn = Button(productWin,text="ADD",command= addCategory ,font=("Kanit", 12),bg='gray20',fg='green2',relief="raised",width=7,padx=1).grid(row=1,column=5,sticky='w')
     categoryEditBtn = Button(productWin,text="EDIT",command= edit_catagory ,font=("Kanit", 12),bg='gray20',fg='steelblue1',relief="raised",width=7,padx=1).grid(row=1,column=6,sticky='e')
@@ -168,11 +188,11 @@ def product():
         for data in productData:
             number_of_pro+= 1
             listbox.insert(END, "  สินค้าชิ้นที่  " + str(number_of_pro))
-            id_pro = tabify("        รหัสสินค้า :       %d"%(data[0]))
-            name_pro = tabify("        ชื่อสินค้า :         %s"%(data[1]))
-            cate_pro = tabify("        ประเภทสินค้า :    %s"%(data[2]))
-            buy_pro = tabify("        ราคาซื้อ :          %.2f"%(data[3]))
-            sell_pro = tabify("        ราคาขาย :         %.2f"%(data[4]))
+            id_pro = "        รหัสสินค้า :       %d"%(data[0])
+            name_pro = "        ชื่อสินค้า :         %s"%(data[1])
+            cate_pro = "        ประเภทสินค้า :    %s"%(data[2])
+            buy_pro = "        ราคาซื้อ :          %.2f"%(data[3])
+            sell_pro = "        ราคาขาย :         %.2f"%(data[4])
             total = id_pro+name_pro+cate_pro+buy_pro+sell_pro
             listbox.insert(END, id_pro)
             listbox.insert(END, name_pro)

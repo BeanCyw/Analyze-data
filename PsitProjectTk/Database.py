@@ -28,6 +28,10 @@ mycursor = mydb.cursor()
 # mycursor.execute(sql)
 # mydb.commit()
 
+# sql = "UPDATE products SET category = 'dasda', category= '1112'"
+# mycursor.execute(sql)
+# mydb.commit()
+
 # sql = "DELETE FROM products WHERE category='dasdasd'"
 # mycursor.execute(sql)
 # mydb.commit()
@@ -52,8 +56,8 @@ mycursor = mydb.cursor()
 # myresult = mycursor.fetchall()
 # print(myresult)
 
-productFromDb = "SELECT * FROM products "
-mycursor.execute(productFromDb)
-productData = mycursor.fetchall()
-for data in productData:
-    print("รหัสสินค้า :%d"%(data[0]))
+# productFromDb = "SELECT * FROM products "
+# mycursor.execute(productFromDb)
+# productData = mycursor.fetchall()
+# for data in productData:
+#     print("รหัสสินค้า :%d"%(data[0]))
