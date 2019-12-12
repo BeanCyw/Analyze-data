@@ -1,3 +1,4 @@
+"""Analyze Data"""
 from tkinter import *
 from tkinter import messagebox
 
@@ -20,112 +21,108 @@ mydb = mysql.connect(
 global mycursor
 mycursor = mydb.cursor()
 
-
-# sql = "DROP TABLE Products"
-# mycursor.execute(sql)
-# mydb.commit()
-
-
-
 def product():
     """Products Setting Windows"""
-    productWin = Tk()
-    productWin.title("Grocery Store")
-    productWin.configure(background='gray20')
+    product_win = Tk()
+    product_win.title("Grocery Store")
+    product_win.configure(background='gray20')
 
-    Label(productWin, text='เพิ่มสินค้า',font=("Kanit", 25),width=10, padx=1,pady=5,fg='goldenrod1',bg='gray20').grid(row=0,column=1,columnspan=5)
+    Label(product_win, text='เพิ่มสินค้า',font=("Kanit", 25),width=10, padx=1,pady=5,fg='goldenrod1',bg='gray20').grid(row=0,column=1,columnspan=5)
 
 
-    Label(productWin, text='ชื่อสินค้า',font=("Kanit", 16),width=10,fg='azure',bg='gray20',anchor="e").grid(row=1,column=1,columnspan=1)
-    name = Entry(productWin, width = 12,font=("Kanit", 12),fg='gray1',bg='gray99')
+    Label(product_win, text='ชื่อสินค้า',font=("Kanit", 16),width=10,fg='azure',bg='gray20',anchor="e").grid(row=1,column=1,columnspan=1)
+    name = Entry(product_win, width = 12,font=("Kanit", 12),fg='gray1',bg='gray99')
     name.grid(row=1,column=2)
     
-    Label(productWin, text='ประเภทสินค้า',font=("Kanit", 16),width=12,fg='azure',bg='gray20',pady=10,anchor="e").grid(row=1,column=3)
+    Label(product_win, text='ประเภทสินค้า',font=("Kanit", 16),width=12,fg='azure',bg='gray20',pady=10,anchor="e").grid(row=1,column=3)
     
     def pro_id_def():
-        global proId
-        proId = 0
-        print(myresult)
+        """Assign Products ID"""
+        global pro_id
+        pro_id = 0
+        check_id = "SELECT * FROM products WHERE productsID=(SELECT MAX(productsId) FROM products)"
+        mycursor.execute(check_id)
+        myresult = mycursor.fetchone()
         if myresult == None:
-            proId = 1
+            pro_id = 1
         else:
-            proId = myresult[0]
-            proId += 1
-            # proIdCheck = len(proId.lstrip("0"))
-            # # print(proIdCheck, proId.lstrip("0"))
-            # proId = proId[:3] + str(int(proId[3])+1)
-            print(myresult[0])
-            print(proId)
+            pro_id = myresult[0]
+            pro_id += 1
+        print(pro_id)
 
-    global newCategory
-    newCategory = None
+    pro_id_def()
+
+    global new_category
+    new_category = None
     
     clicked = StringVar()
-    global categoryOptions
-    categoryFromDb = "SELECT * FROM products"
-    mycursor.execute(categoryFromDb)
-    categoryData = mycursor.fetchall()
-    # print(categoryData)
-    if categoryData == [] and newCategory == None:
-        categoryOptions = ['ไม่พบประเภทสินค้า']
+    global category_options
+    category_from_db = "SELECT * FROM products"
+    mycursor.execute(category_from_db)
+    category_data = mycursor.fetchall()
+    if category_data == [] and new_category == None:
+        category_options = ['ไม่พบประเภทสินค้า']
     else:
-        categoryOptions = [cate[2] for cate in categoryData]
+        category_options = [cate[2] for cate in category_data]
 
     clicked = StringVar()
 
-    def updateCategory():
-        if newCate.get() == "":
+    def update_category():
+        """Update Category"""
+        if new_cate.get() == "":
             messagebox.showerror("Error", "กรุณากรอกประเภทสินค้า")
         else:
-            global newCategory
-            newCategory = newCate.get()
+            global new_category
+            new_category = new_cate.get()
             set_cate()
-            addCate.destroy()
+            add_cate.destroy()
 
     def set_cate():
-        global categoryOptions
-        categoryFromDb = "SELECT * FROM products "
-        mycursor.execute(categoryFromDb)
-        categoryData = mycursor.fetchall()
-        if categoryData == [] and newCategory == None:
-            categoryOptions = ['ไม่พบประเภทสินค้า']
+        """Show category setting"""
+        global category_options
+        category_from_db = "SELECT * FROM products "
+        mycursor.execute(category_from_db)
+        category_data = mycursor.fetchall()
+        if category_data == [] and new_category == None:
+            category_options = ['ไม่พบประเภทสินค้า']
         else:
-            categoryOptions = [cate[2] for cate in categoryData]
+            category_options = [cate[2] for cate in category_data]
 
-        if newCategory != None:
-            categoryOptions = set(categoryOptions)
-            categoryOptions = list(categoryOptions)
-            categoryOptions.insert(0, newCategory)
+        if new_category != None:
+            category_options = set(category_options)
+            category_options = list(category_options)
+            category_options.insert(0, new_category)
 
-        print(categoryOptions)
         clicked = StringVar()
-        categoryShow()
+        category_show()
     
-    def categoryShow():
-        global categoryOptions
-        category_shw = categoryOptions
-        categoryOptions = set(categoryOptions)
-        categoryOptions = list(categoryOptions)
+    def category_show():
+        """Show all category"""
+        global category_options
+        category_shw = category_options
+        category_options = set(category_options)
+        category_options = list(category_options)
         clicked.set(category_shw[0])
-        category = OptionMenu(productWin, clicked, *categoryOptions)
+        category = OptionMenu(product_win, clicked, *category_options)
         category.configure(width=15, justify=CENTER, font=("Kanit", 10),fg='azure',bg='gray20',borderwidth=0)
         category.grid(row=1,column=4,columnspan=1,sticky='w')
 
-    categoryShow()
+    category_show()
 
-    def addCategory():
-        global addCate
-        addCate = Toplevel()
-        addCate.title("AddCategory")
-        Label(addCate, text="เพิ่มประเภทสินค้า",font=("Kanit", 13)).pack(side=LEFT)
-        global newCate
-        newCate = Entry(addCate, width=20,font=("Kanit", 13))
-        newCate.pack(side=LEFT)
-        submitAddCate = Button(addCate, text='ยืนยัน', command=updateCategory,font=("Kanit", 13)).pack()
+    def add_category():
+        """Add new category"""
+        global add_cate
+        add_cate = Toplevel()
+        add_cate.title("AddCategory")
+        Label(add_cate, text="เพิ่มประเภทสินค้า",font=("Kanit", 13)).pack(side=LEFT)
+        global new_cate
+        new_cate = Entry(add_cate, width=20,font=("Kanit", 13))
+        new_cate.pack(side=LEFT)
+        submit_add_cate = Button(add_cate, text='ยืนยัน', command=update_category,font=("Kanit", 13)).pack()
 
     def edit_cate_to_db(text):
-        sql = "UPDATE products SET category = '" + eCate.get() + "'WHERE category= '" + text + "'"
-        print(sql)
+        """Edit category to Database"""
+        sql = "UPDATE products SET category = '" + e_cate.get() + "'WHERE category= '" + text + "'"
         mycursor.execute(sql)
         mydb.commit()
         edit_show.destroy()
@@ -134,6 +131,7 @@ def product():
         set_cate()
 
     def edit_cate_command():
+        """Edit category information that you want to edit"""
         if listbox.get(ACTIVE) == "คลิกเลือกประเภทสินค้าที่จะแก้ไข  ":
             messagebox.showerror("Error", "กรุณาระบุสินค้าที่จะแก้ไข")
             edit_show.destroy()
@@ -143,15 +141,16 @@ def product():
             global edit_cate
             edit_cate = Toplevel()
             edit_cate.title("Edit_cate")
-            global eCate
+            global e_cate
             Label(edit_cate, text="แก้ไขประเภทสินค้า",font=("Kanit", 13)).pack(side=LEFT)
-            eCate = Entry(edit_cate, width=20,font=("Kanit", 13))
+            e_cate = Entry(edit_cate, width=20,font=("Kanit", 13))
             text = (listbox.get(ACTIVE)).lstrip(" ")
-            eCate.insert(0, text)
-            eCate.pack(side=LEFT)
-            submitEditCate = Button(edit_cate, text='ยืนยัน', command=lambda : edit_cate_to_db(text,),font=("Kanit", 13)).pack()
+            e_cate.insert(0, text)
+            e_cate.pack(side=LEFT)
+            submit_edit_cate = Button(edit_cate, text='ยืนยัน', command=lambda : edit_cate_to_db(text,),font=("Kanit", 13)).pack()
 
     def edit_catagory():
+        """Edit category Window"""
         global edit_show
         edit_show = Toplevel()
         edit_show.title("Edit")
@@ -159,18 +158,18 @@ def product():
         list_cate_shw()
         
     def list_cate_shw():
+        """Show category information that you want to edit"""
         scrollbar = Scrollbar(edit_show)
         scrollbar.pack(side=RIGHT, fill=Y)
 
         global listbox
         listbox = Listbox(edit_show, yscrollcommand=scrollbar.set,font=("Kanit", 12))
-        productData = get_cate_form_db()
+        product_data = get_cate_form_db()
         number_of_pro= 0
         listbox.insert(END, "คลิกเลือกประเภทสินค้าที่จะแก้ไข  ")
-        for data in set(productData):
+        for data in set(product_data):
             number_of_pro+= 1
             cate_shw = "      %s"%(data)
-            # listbox.insert(END, "  ประเภทสินค้าที่  " + str(number_of_pro))
             listbox.insert(END, cate_shw)
         listbox.pack(side=LEFT, fill=BOTH, expand=TRUE)
         Button(edit_show,text="แก้ไขประเภทสินค้า",command= edit_cate_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
@@ -178,149 +177,149 @@ def product():
         scrollbar.config(command=listbox.yview)
 
     def get_cate_form_db():
-        productFromDb = "SELECT category FROM products "
-        mycursor.execute(productFromDb)
-        productData = mycursor.fetchall()
-        return productData
+        """Get category data from Database"""
+        product_from_db = "SELECT category FROM products "
+        mycursor.execute(product_from_db)
+        product_data = mycursor.fetchall()
+        return product_data
 
-    categoryAddBtn = Button(productWin,text="เพิ่ม",command= addCategory ,font=("Kanit", 12),bg='gray20',fg='green2',relief="raised",width=7,padx=1).grid(row=1,column=5,sticky='w')
-    categoryEditBtn = Button(productWin,text="แก้ไข",command= edit_catagory ,font=("Kanit", 12),bg='gray20',fg='steelblue1',relief="raised",width=7,padx=1).grid(row=1,column=6,sticky='e')
+    category_add_btn = Button(product_win,text="เพิ่ม",command= add_category ,font=("Kanit", 12),bg='gray20',fg='green2',relief="raised",width=7,padx=1).grid(row=1,column=5,sticky='w')
+    category_edit_btn = Button(product_win,text="แก้ไข",command= edit_catagory ,font=("Kanit", 12),bg='gray20',fg='steelblue1',relief="raised",width=7,padx=1).grid(row=1,column=6,sticky='e')
     
-    Label(productWin, text='ราคาซื้อ',font=("Kanit", 16),width=10,fg='azure',bg='gray20',anchor="e").grid(row=2,column=1,columnspan=1)
-    buy = Entry(productWin, width = 12,font=("Kanit", 12),fg='gray1',bg='gray99')
+    Label(product_win, text='ราคาซื้อ',font=("Kanit", 16),width=10,fg='azure',bg='gray20',anchor="e").grid(row=2,column=1,columnspan=1)
+    buy = Entry(product_win, width = 12,font=("Kanit", 12),fg='gray1',bg='gray99')
     buy.grid(row=2,column=2)
-    Label(productWin, text='ราคาขาย',font=("Kanit", 16),width=12,fg='azure',bg='gray20',anchor="e").grid(row=2,column=3,columnspan=1)
-    sell = Entry(productWin, width = 15,font=("Kanit", 12),fg='gray1',bg='gray99')
+    Label(product_win, text='ราคาขาย',font=("Kanit", 16),width=12,fg='azure',bg='gray20',anchor="e").grid(row=2,column=3,columnspan=1)
+    sell = Entry(product_win, width = 15,font=("Kanit", 12),fg='gray1',bg='gray99')
     sell.grid(row=2,column=4,sticky='w')
     
 
     def edit_pro_to_db(text):
+        """Edit information of products that you want to Database"""
         if "รหัสสินค้า" in text:
-            productIdFromDb = "SELECT productsId FROM products "
-            mycursor.execute(productIdFromDb)
-            productData = mycursor.fetchall()
+            product_id_from_db = "SELECT productsId FROM products "
+            mycursor.execute(product_id_from_db)
+            product_data = mycursor.fetchall()
 
-            for data in productData:
-                if int(ePro.get()) == data[0]:
+            for data in product_data:
+                if int(e_pro.get()) == data[0]:
                     messagebox.showerror("Error", "มีรหัสสินค้านี้ในระบบอยู่แล้ว")
                     break
             else:
                 text = text[27:]
-                sql = "UPDATE products SET productsId = '" + ePro.get() + "'WHERE productsId= '" + text + "'"
-                print(sql)
+                sql = "UPDATE products SET productsId = '" + e_pro.get() + "'WHERE productsId= '" + text + "'"
                 mycursor.execute(sql)
                 mydb.commit()
         elif "ชื่อสินค้า" in text:
             text = text[29:]
-            sql = "UPDATE products SET productsName = '" + ePro.get() + "'WHERE productsName= '" + text + "'"
-            print(sql)
+            sql = "UPDATE products SET productsName = '" + e_pro.get() + "'WHERE productsName= '" + text + "'"
             mycursor.execute(sql)
             mydb.commit()
         elif "ประเภทสินค้า" in text:
             text = text[26:]
-            sql = "UPDATE products SET category = '" + ePro.get() + "'WHERE category= '" + text + "'"
-            print(sql)
+            sql = "UPDATE products SET category = '" + e_pro.get() + "'WHERE category= '" + text + "'"
             mycursor.execute(sql)
             mydb.commit()
         elif "ราคาซื้อ" in text:
             text = text[28:]
             text = text.rstrip(" บาท")
-            sql = "UPDATE products SET buy = '" + ePro.get() + "'WHERE buy= '" + text + "'"
-            print(sql)
+            sql = "UPDATE products SET buy = '" + e_pro.get() + "'WHERE buy= '" + text + "'"
             mycursor.execute(sql)
             mydb.commit()
         elif "ราคาขาย" in text:
             text = text[26:]
             text = text.rstrip(" บาท")
-            sql = "UPDATE products SET sell = '" + ePro.get() + "'WHERE sells= '" + text + "'"
-            print(sql)
+            sql = "UPDATE products SET sell = '" + e_pro.get() + "'WHERE sells= '" + text + "'"
             mycursor.execute(sql)
             mydb.commit()
 
-        productsShowing.destroy()
+        products_showing.destroy()
         edit_pro.destroy()
-        showProducts()
+        show_products()
         set_cate()
+        pro_id_def()
 
 
     
     def edit_pro_command():
-        global edit_pro
-        edit_pro = Toplevel()
-        edit_pro.title("Edit Products")
-        global ePro
-        Label(edit_pro, text="Edit Product",font=("Kanit", 13)).pack(side=LEFT)
-        ePro = Entry(edit_pro, width=20,font=("Kanit", 13))
+        """Show product information that you want to edit"""
         text = listbox_pro.get(ACTIVE)
-        print(text)
         if "สินค้าชิ้นที่  1" in text:
             messagebox.showerror("Error", "กรุณาคลิกเลือกข้อมูลที่ต้องการแก้ไข")
-        elif "รหัสสินค้า" in text:
-            ePro_id = Entry
-            ePro.insert(0, text[27:])
-        elif "ชื่อสินค้า" in text:
-            ePro.insert(0, text[29:])
-        elif "ประเภทสินค้า" in text:
-            ePro.insert(0, text[26:])
-        elif "ราคาซื้อ" in text:
-            text = text.rstrip(" บาท")
-            ePro.insert(0, text[28:])
-        elif "ราคาขาย" in text:
-            text = text.rstrip(" บาท")
-            ePro.insert(0, text[26:])
-        ePro.pack(side=LEFT)
-        submitEditPro = Button(edit_pro, text='Submit', command=lambda : edit_pro_to_db(listbox_pro.get(ACTIVE)),font=("Kanit", 13)).pack()
+        else:
+            global edit_pro
+            edit_pro = Toplevel()
+            edit_pro.title("Edit Products")
+            global e_pro
+            Label(edit_pro, text="แก้ไขสินค้า",font=("Kanit", 13)).pack(side=LEFT)
+            e_pro = Entry(edit_pro, width=20,font=("Kanit", 13))
+            if "รหัสสินค้า" in text:
+                e_pro_id = Entry
+                e_pro.insert(0, text[27:])
+            elif "ชื่อสินค้า" in text:
+                e_pro.insert(0, text[29:])
+            elif "ประเภทสินค้า" in text:
+                e_pro.insert(0, text[26:])
+            elif "ราคาซื้อ" in text:
+                text = text.rstrip(" บาท")
+                e_pro.insert(0, text[28:])
+            elif "ราคาขาย" in text:
+                text = text.rstrip(" บาท")
+                e_pro.insert(0, text[26:])
+            e_pro.pack(side=LEFT)
+            submit_edit_pro = Button(edit_pro, text='ยืนยัน', command=lambda : edit_pro_to_db(listbox_pro.get(ACTIVE)),font=("Kanit", 13)).pack()
 
 
     def delete_pro_from_db():
-        sql = "DELETE FROM products WHERE productsId='" + ePro_delete.get() +"';"
+        """Delete product that you want from Database"""
+        sql = "DELETE FROM products WHERE productsId='" + e_pro_delete.get() +"';"
         mycursor.execute(sql)
         mydb.commit()
         messagebox.showinfo("Info", "ลบสินค้าเรียบร้อย")
         delete_pro.destroy()
-        productsShowing.destroy()
-        showProducts()
+        products_showing.destroy()
+        show_products()
         set_cate()
         pro_id_def()
 
 
     def delete_pro_command():
-        global delete_pro
-        delete_pro = Toplevel()
-        delete_pro.title("Edit Products")
-        global ePro_delete
-        Label(delete_pro, text="ระบุรหัสสินค้า",font=("Kanit", 13)).pack(side=LEFT)
-        ePro_delete = Entry(delete_pro, width=20,font=("Kanit", 13))
+        """Delete product that you want to delete"""
         text = listbox_pro.get(ACTIVE)
         if "รหัสสินค้า" in text:
-            ePro_delete_id = Entry
-            ePro_delete.insert(0, text[27:])
+            global delete_pro
+            delete_pro = Toplevel()
+            delete_pro.title("Edit Products")
+            global e_pro_delete
+            Label(delete_pro, text="ระบุรหัสสินค้า",font=("Kanit", 13)).pack(side=LEFT)
+            e_pro_delete = Entry(delete_pro, width=20,font=("Kanit", 13))
+            e_pro_delete_id = Entry
+            e_pro_delete.insert(0, text[27:])
+            e_pro_delete.pack(side=LEFT)
+            submit_edit_pro = Button(delete_pro, text='ลบสินค้า', command=delete_pro_from_db,font=("Kanit", 13)).pack()
         else:
             messagebox.showerror("Error", "กรุณาระบุรหัสสินค้า")
-            delete_pro.destroy()
-        ePro_delete.pack(side=LEFT)
-        submitEditPro = Button(delete_pro, text='ลบสินค้า', command=delete_pro_from_db,font=("Kanit", 13)).pack()
 
 
-    def showProducts():
-        global productsShowing
-        productsShowing = Toplevel()
-        productsShowing.title("Product Showing")
-        categoryFromDb = "SELECT productsName FROM products "
-        mycursor.execute(categoryFromDb)
-        nameData = mycursor.fetchall()
-        global nameShow
-        productsShowing.geometry("500x300")
-        scrollbar = Scrollbar(productsShowing)
+    def show_products():
+        """Show all information of products"""
+        global products_showing
+        products_showing = Toplevel()
+        products_showing.title("Product Showing")
+        category_from_db = "SELECT productsName FROM products "
+        mycursor.execute(category_from_db)
+        name_data = mycursor.fetchall()
+        products_showing.geometry("500x300")
+        scrollbar = Scrollbar(products_showing)
         scrollbar.pack(side=RIGHT, fill=Y)
 
         global listbox_pro
-        listbox_pro = Listbox(productsShowing, yscrollcommand=scrollbar.set,font=("Kanit", 12))
-        productFromDb = "SELECT * FROM products "
-        mycursor.execute(productFromDb)
-        productData = mycursor.fetchall()
+        listbox_pro = Listbox(products_showing, yscrollcommand=scrollbar.set,font=("Kanit", 12))
+        product_from_db = "SELECT * FROM products "
+        mycursor.execute(product_from_db)
+        product_data = mycursor.fetchall()
         number_of_pro= 0
-        for data in productData:
+        for data in product_data:
             number_of_pro+= 1
             listbox_pro.insert(END, "  สินค้าชิ้นที่  " + str(number_of_pro))
             id_pro = "        รหัสสินค้า :       %d"%(data[0])
@@ -338,42 +337,32 @@ def product():
 
         scrollbar.config(command=listbox_pro.yview)
 
-        Button(productsShowing,text="แก้ไขสินค้า",command= edit_pro_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
-        Button(productsShowing,text="ลบสินค้า",command= delete_pro_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
+        Button(products_showing,text="แก้ไขสินค้า",command= edit_pro_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
+        Button(products_showing,text="ลบสินค้า",command= delete_pro_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
 
 
-   
-        
-
-    checkId = "SELECT * FROM products WHERE productsID=(SELECT MAX(productsId) FROM products)"
-    mycursor.execute(checkId)
-    myresult = mycursor.fetchone()
-    
-    pro_id_def()
-
-    def addProducts():
-        global proId
+    def add_products():
+        """Add new product & information about product"""
+        global pro_id
         if name.get() == "":
             messagebox.showerror("Error", "กรุณาระบุข้อมูลสินค้า")
         else:
             sql = "INSERT INTO products (productsId, productsName, category, buy, sell, beforeSold, afterSold) VALUES (%s, %s, %s,%s ,%s, %s, %s)"
-            val = (proId, name.get(), clicked.get() ,buy.get(), sell.get(), 0, 0)
+            val = (pro_id, name.get(), clicked.get() ,buy.get(), sell.get(), 0, 0)
             mycursor.execute(sql, val)
             mydb.commit()
-            checkId = "SELECT * FROM products WHERE productsID=(SELECT MAX(productsId) FROM products)"
-            mycursor.execute(checkId)
+            check_id = "SELECT * FROM products WHERE productsID=(SELECT MAX(productsId) FROM products)"
+            mycursor.execute(check_id)
             myresult = mycursor.fetchone()
-            proId == myresult[0]
-            proId += 1
-            # proId = proId[:3] + str(int(proId[3])+1)
-            # print(proId, "Before")
+            pro_id == myresult[0]
+            pro_id += 1
             name.delete(0, END)
             buy.delete(0, END)
             sell.delete(0, END)
 
-    productsShowBtn = Button(productWin, text="แสดงสินค้า", command= showProducts,font=("Kanit", 12),fg='gray20',bg='steelblue2',relief="raised",width=15,padx=1).grid(row=3,column=2,columnspan=1)
-    productsAddsBtn = Button(productWin, text="เพิ่มสินค้า", command= addProducts ,font=("Kanit", 12),fg='gray20',bg='goldenrod1',relief="raised",width=15,padx=1).grid(row=3,column=4,columnspan=1)
+    products_show_btn = Button(product_win, text="แสดงสินค้า", command= show_products,font=("Kanit", 12),fg='gray20',bg='steelblue2',relief="raised",width=15,padx=1).grid(row=3,column=2,columnspan=1)
+    products_add_btn = Button(product_win, text="เพิ่มสินค้า", command= add_products ,font=("Kanit", 12),fg='gray20',bg='goldenrod1',relief="raised",width=15,padx=1).grid(row=3,column=4,columnspan=1)
 
-    productWin.mainloop()
+    product_win.mainloop()
 
 product()
