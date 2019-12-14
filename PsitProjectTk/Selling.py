@@ -6,7 +6,6 @@ from tkinter import messagebox
 # importing 'mysql.connector' as mysql for convenient
 import mysql.connector as mysql
 
-
 ## connecting to the database using 'connect()' method
 ## it takes 3 required parameters 'host', 'user', 'passwd'
 global mydb
@@ -20,27 +19,26 @@ mydb = mysql.connect(
 global mycursor
 mycursor = mydb.cursor()
 
-
 def selling():
     """selling windows"""
     mydb.commit()
     global selling_showing
     selling_showing = Toplevel()
     selling_showing.title("Selling Showing")
-    selling_showing.geometry("500x500+400+100")
+    selling_showing.geometry("800x700+400+60")
     basket_show()
-    Label(selling_showing,text="เลือกสินค้าตะกร้า",font=("TH Sarabun New", 24),width=15,padx=1).pack()
+    Label(selling_showing,text="เลือกสินค้าตะกร้า",font=("TH Sarabun New", 24+10),width=15,padx=1).pack()
     category_show()
-    submit_button = Button(selling_showing, text='ยืนยัน', command=lambda : product_show(),font=("TH Sarabun New", 15), width=19)
+    submit_button = Button(selling_showing, text='ยืนยัน', command=lambda : product_show(),font=("TH Sarabun New", 15+10), width=19)
     submit_button.pack()
-    Label(selling_showing,text="",font=("TH Sarabun New", 15),width=15).pack()
-    Label(selling_showing,text="ราคารวม",font=("TH Sarabun New", 18),width=21, justify = LEFT, anchor=W).pack()
+    Label(selling_showing,text="",font=("TH Sarabun New", 15+10),width=15).pack()
+    Label(selling_showing,text=" ราคารวม",font=("TH Sarabun New", 18+10),width=21, justify = LEFT, anchor=W).pack()
 
-    Label(selling_showing,text="  %.2f  บาท"%(price),font=("TH Sarabun New", 15),width=23,justify = LEFT, anchor=NW).pack()
-    Label(selling_showing,text="",font=("TH Sarabun New", 15),width=15).pack()
-    delete_button = Button(selling_showing, text='ลบสินค้า', command= delete_from_basket,font=("TH Sarabun New", 15), width=19)
+    Label(selling_showing,text="  %.2f  บาท"%(price),font=("TH Sarabun New", 15+10),width=23,justify = LEFT, anchor=NW).pack()
+    Label(selling_showing,text="",font=("TH Sarabun New", 15+10),width=15).pack()
+    delete_button = Button(selling_showing, text='ลบสินค้า', command= delete_from_basket,font=("TH Sarabun New", 15+10), width=19)
     delete_button.pack()
-    success_button = Button(selling_showing, text='ทำรายการเสร็จสิ้น', command= finish_sell,font=("TH Sarabun New", 15), width=19)
+    success_button = Button(selling_showing, text='ทำรายการเสร็จสิ้น', command= finish_sell,font=("TH Sarabun New", 15+10), width=19)
     success_button.pack()
 
 def product_show():
@@ -49,13 +47,13 @@ def product_show():
     global product_showing
     product_showing = Toplevel()
     product_showing.title("Product Showing")
-    product_showing.geometry("500x300+980+100")
+    product_showing.geometry("800x500+450+60")
     scrollbar = Scrollbar(product_showing)
     scrollbar.pack(side=RIGHT, fill=Y)
-    Label(product_showing,text="คลิกรหัสสินค้าเพื่อเลือก",font=("TH Sarabun New", 20),width = 20,padx = 1, anchor = W).pack()
+    Label(product_showing,text="คลิกรหัสสินค้าเพื่อเลือก",font=("TH Sarabun New", 20+10),width = 20,padx = 1, anchor = W).pack()
 
     global listbox_to_basket
-    listbox_to_basket = Listbox(product_showing, yscrollcommand=scrollbar.set,font=("TH Sarabun New", 14))
+    listbox_to_basket = Listbox(product_showing, yscrollcommand=scrollbar.set,font=("TH Sarabun New", 14+10))
     product_from_db = "SELECT * FROM products WHERE category='" + clicked.get() +"'"
     mycursor.execute(product_from_db)
     product_data = mycursor.fetchall()
@@ -75,11 +73,11 @@ def product_show():
 
     scrollbar.config(command=listbox_to_basket.yview)
 
-    Label(product_showing,text="ระบุจำนวน",font=("TH Sarabun New", 16),width=15,padx=1).pack()
+    Label(product_showing,text="ระบุจำนวน",font=("TH Sarabun New", 16+10),width=15,padx=1).pack()
     global quantity_entry
-    quantity_entry = Entry(product_showing, width=15,font=("TH Sarabun New", 15))
+    quantity_entry = Entry(product_showing, width=15,font=("TH Sarabun New", 15+10))
     quantity_entry.pack()
-    Button(product_showing,text="เพิ่มลงตะกร้า", command= set_basket,font=("TH Sarabun New", 14),relief="raised",width=20,padx=1).pack()
+    Button(product_showing,text="เพิ่มลงตะกร้า", command= set_basket,font=("TH Sarabun New", 14+10),relief="raised",width=20,padx=1).pack()
 
 def category_show():
     """Show all category"""
@@ -103,8 +101,8 @@ def category_show():
     category_options = list(category_options)
     clicked.set(category_shw[0])
     category = OptionMenu(selling_showing, clicked, *category_options)
-    category.configure(width=15, justify=CENTER, font=("TH Sarabun New", 15),bg="gray30", fg="white",borderwidth=0)
-    category['menu'].config(font=("TH Sarabun New", (15)),bg="gray30", fg="white")
+    category.configure(width=15, justify=CENTER, font=("TH Sarabun New", 15+10),bg="gray30", fg="white",borderwidth=0)
+    category['menu'].config(font=("TH Sarabun New", (15+10)),bg="gray30", fg="white")
     category.pack()
     mydb.commit()
 
@@ -115,7 +113,7 @@ def basket_show():
     scrollbar.pack(side=LEFT, fill=Y)
 
     global listbox_pro
-    listbox_pro = Listbox(selling_showing, yscrollcommand=scrollbar.set,font=("TH Sarabun New", 15))
+    listbox_pro = Listbox(selling_showing, yscrollcommand=scrollbar.set,font=("TH Sarabun New", 15+10))
     global basket
     check = "SELECT * FROM basket"
     mycursor.execute(check)
@@ -197,7 +195,6 @@ def set_basket():
                 quantity_entry.delete(0, END)
                 product_showing.destroy()
                 selling()
-
 
 def finish_sell():
     """finish sell"""

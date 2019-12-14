@@ -16,7 +16,7 @@ mydb = mysql.connect(
 global mycursor
 mycursor = mydb.cursor()
 
-# sql = "ALTER TABLE basket ADD productId INT(11) FIRST"
+# sql = "ALTER TABLE products ADD profit FLOAT(20)"
 # mycursor.execute(sql)
 # mydb.commit()
 
@@ -36,7 +36,7 @@ mycursor = mydb.cursor()
 # mycursor.execute(sql)
 # mydb.commit()
 
-# sql = "DELETE FROM basket"
+# sql = "DELETE FROM products"
 # mycursor.execute(sql)
 # mydb.commit()
 
@@ -66,3 +66,19 @@ mycursor = mydb.cursor()
 # productData = mycursor.fetchall()
 # for data in productData:
 #     print("รหัสสินค้า :%d"%(data[0]))
+
+# sql = "INSERT INTO products (productsId, productsName, category, buy, sell, beforeSold, afterSold) VALUES (%s, %s, %s,%s ,%s, %s, %s)"
+# val = ('0002', 'cxzczx', 'fah', '50.50', '50.50', 0, 0)
+# mycursor.execute(sql, val)
+# mydb.commit()
+
+# productFromDb = "SELECT * FROM products "
+# mycursor.execute(productFromDb)
+# productData = mycursor.fetchall()
+# for data in productData:
+#     have_sold = (data[5]-data[6])
+#     profit = (data[4] * have_sold) - (data[3]*have_sold)
+#     print(data, profit)
+#     sql = "UPDATE products SET profit = '" + str(profit) + "' WHERE productsId = '" + str(data[0]) + "'"
+#     mycursor.execute(sql)
+#     mydb.commit()
