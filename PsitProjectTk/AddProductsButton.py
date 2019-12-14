@@ -1,6 +1,7 @@
-"""Analyze Data"""
+"""Manage Product Data"""
 from tkinter import *
 from tkinter import messagebox
+from Stock import set_pro
 
 # Connecting to the database
 
@@ -23,18 +24,17 @@ mycursor = mydb.cursor()
 
 def product():
     """Products Setting Windows"""
-    product_win = Tk()
-    product_win.title("Grocery Store")
-    product_win.configure(background='gray20')
+    product_win = Toplevel()
+    product_win.title("Add Product Data")
 
-    Label(product_win, text='เพิ่มสินค้า',font=("Kanit", 25),width=10, padx=1,pady=5,fg='goldenrod1',bg='gray20').grid(row=0,column=1,columnspan=5)
+    Label(product_win, text='จัดการสินค้า',font=("TH Sarabun New", 25),width=10, padx=1,pady=5).grid(row=0,column=1,columnspan=5)
 
 
-    Label(product_win, text='ชื่อสินค้า',font=("Kanit", 16),width=10,fg='azure',bg='gray20',anchor="e").grid(row=1,column=1,columnspan=1)
-    name = Entry(product_win, width = 12,font=("Kanit", 12),fg='gray1',bg='gray99')
+    Label(product_win, text='ชื่อสินค้า',font=("TH Sarabun New", 16),width=10,anchor="e").grid(row=1,column=1,columnspan=1)
+    name = Entry(product_win, width = 12,font=("TH Sarabun New", 14),bg='gray99')
     name.grid(row=1,column=2)
     
-    Label(product_win, text='ประเภทสินค้า',font=("Kanit", 16),width=12,fg='azure',bg='gray20',pady=10,anchor="e").grid(row=1,column=3)
+    Label(product_win, text='ประเภทสินค้า',font=("TH Sarabun New", 16),width=12,pady=10,anchor="e").grid(row=1,column=3)
     
     def pro_id_def():
         """Assign Products ID"""
@@ -48,7 +48,6 @@ def product():
         else:
             pro_id = myresult[0]
             pro_id += 1
-        print(pro_id)
 
     pro_id_def()
 
@@ -104,7 +103,8 @@ def product():
         category_options = list(category_options)
         clicked.set(category_shw[0])
         category = OptionMenu(product_win, clicked, *category_options)
-        category.configure(width=15, justify=CENTER, font=("Kanit", 10),fg='azure',bg='gray20',borderwidth=0)
+        category.configure(width=15, justify=CENTER, font=("TH Sarabun New", 15),bg="gray30", fg="white",borderwidth=0)
+        category['menu'].config(font=("TH Sarabun New", (15)),bg="gray30", fg="white")
         category.grid(row=1,column=4,columnspan=1,sticky='w')
 
     category_show()
@@ -114,11 +114,12 @@ def product():
         global add_cate
         add_cate = Toplevel()
         add_cate.title("AddCategory")
-        Label(add_cate, text="เพิ่มประเภทสินค้า",font=("Kanit", 13)).pack(side=LEFT)
+        Label(add_cate, text="เพิ่มประเภทสินค้า",font=("TH Sarabun New", 15)).pack(side=LEFT)
         global new_cate
-        new_cate = Entry(add_cate, width=20,font=("Kanit", 13))
+        new_cate = Entry(add_cate, width=20,font=("TH Sarabun New", 15))
         new_cate.pack(side=LEFT)
-        submit_add_cate = Button(add_cate, text='ยืนยัน', command=update_category,font=("Kanit", 13)).pack()
+        submit_add_cate = Button(add_cate, text='ยืนยัน', command=update_category,font=("TH Sarabun New", 15)).pack()
+        
 
     def edit_cate_to_db(text):
         """Edit category to Database"""
@@ -129,6 +130,8 @@ def product():
         edit_cate.destroy()
         edit_catagory()
         set_cate()
+        set_pro()
+        
 
     def edit_cate_command():
         """Edit category information that you want to edit"""
@@ -142,12 +145,12 @@ def product():
             edit_cate = Toplevel()
             edit_cate.title("Edit_cate")
             global e_cate
-            Label(edit_cate, text="แก้ไขประเภทสินค้า",font=("Kanit", 13)).pack(side=LEFT)
-            e_cate = Entry(edit_cate, width=20,font=("Kanit", 13))
+            Label(edit_cate, text="แก้ไขประเภทสินค้า",font=("TH Sarabun New", 15)).pack(side=LEFT)
+            e_cate = Entry(edit_cate, width=20,font=("TH Sarabun New", 15))
             text = (listbox.get(ACTIVE)).lstrip(" ")
             e_cate.insert(0, text)
             e_cate.pack(side=LEFT)
-            submit_edit_cate = Button(edit_cate, text='ยืนยัน', command=lambda : edit_cate_to_db(text,),font=("Kanit", 13)).pack()
+            submit_edit_cate = Button(edit_cate, text='ยืนยัน', command=lambda : edit_cate_to_db(text,),font=("TH Sarabun New", 15)).pack()
 
     def edit_catagory():
         """Edit category Window"""
@@ -155,15 +158,11 @@ def product():
         edit_show = Toplevel()
         edit_show.title("Edit")
         edit_show.geometry("500x300")
-        list_cate_shw()
-        
-    def list_cate_shw():
-        """Show category information that you want to edit"""
         scrollbar = Scrollbar(edit_show)
-        scrollbar.pack(side=RIGHT, fill=Y)
+        scrollbar.pack(side=LEFT, fill=Y)
 
         global listbox
-        listbox = Listbox(edit_show, yscrollcommand=scrollbar.set,font=("Kanit", 12))
+        listbox = Listbox(edit_show, yscrollcommand=scrollbar.set,font=("TH Sarabun New", 14))
         product_data = get_cate_form_db()
         number_of_pro= 0
         listbox.insert(END, "คลิกเลือกประเภทสินค้าที่จะแก้ไข  ")
@@ -172,7 +171,7 @@ def product():
             cate_shw = "      %s"%(data)
             listbox.insert(END, cate_shw)
         listbox.pack(side=LEFT, fill=BOTH, expand=TRUE)
-        Button(edit_show,text="แก้ไขประเภทสินค้า",command= edit_cate_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
+        Button(edit_show,text="แก้ไขประเภทสินค้า",command= edit_cate_command ,font=("TH Sarabun New", 14),bg='white',relief="raised",width=20,padx=1).pack()
 
         scrollbar.config(command=listbox.yview)
 
@@ -183,14 +182,14 @@ def product():
         product_data = mycursor.fetchall()
         return product_data
 
-    category_add_btn = Button(product_win,text="เพิ่ม",command= add_category ,font=("Kanit", 12),bg='gray20',fg='green2',relief="raised",width=7,padx=1).grid(row=1,column=5,sticky='w')
-    category_edit_btn = Button(product_win,text="แก้ไข",command= edit_catagory ,font=("Kanit", 12),bg='gray20',fg='steelblue1',relief="raised",width=7,padx=1).grid(row=1,column=6,sticky='e')
+    category_add_btn = Button(product_win,text="เพิ่ม",command= add_category ,font=("TH Sarabun New", 14),relief="raised",width=7,padx=1).grid(row=1,column=5,sticky='w')
+    category_edit_btn = Button(product_win,text="แก้ไข",command= edit_catagory ,font=("TH Sarabun New", 14),relief="raised",width=7,padx=1).grid(row=1,column=6,sticky='e')
     
-    Label(product_win, text='ราคาซื้อ',font=("Kanit", 16),width=10,fg='azure',bg='gray20',anchor="e").grid(row=2,column=1,columnspan=1)
-    buy = Entry(product_win, width = 12,font=("Kanit", 12),fg='gray1',bg='gray99')
+    Label(product_win, text='ราคาซื้อ',font=("TH Sarabun New", 16),width=10,anchor="e").grid(row=2,column=1,columnspan=1)
+    buy = Entry(product_win, width = 12,font=("TH Sarabun New", 14),bg='gray99')
     buy.grid(row=2,column=2)
-    Label(product_win, text='ราคาขาย',font=("Kanit", 16),width=12,fg='azure',bg='gray20',anchor="e").grid(row=2,column=3,columnspan=1)
-    sell = Entry(product_win, width = 15,font=("Kanit", 12),fg='gray1',bg='gray99')
+    Label(product_win, text='ราคาขาย',font=("TH Sarabun New", 16),width=12,anchor="e").grid(row=2,column=3,columnspan=1)
+    sell = Entry(product_win, width = 15,font=("TH Sarabun New", 14),bg='gray99')
     sell.grid(row=2,column=4,sticky='w')
     
 
@@ -238,6 +237,7 @@ def product():
         show_products()
         set_cate()
         pro_id_def()
+        set_pro()
 
 
     
@@ -251,8 +251,8 @@ def product():
             edit_pro = Toplevel()
             edit_pro.title("Edit Products")
             global e_pro
-            Label(edit_pro, text="แก้ไขสินค้า",font=("Kanit", 13)).pack(side=LEFT)
-            e_pro = Entry(edit_pro, width=20,font=("Kanit", 13))
+            Label(edit_pro, text="แก้ไขสินค้า",font=("TH Sarabun New", 15)).pack(side=LEFT)
+            e_pro = Entry(edit_pro, width=20,font=("TH Sarabun New", 15))
             if "รหัสสินค้า" in text:
                 e_pro_id = Entry
                 e_pro.insert(0, text[27:])
@@ -267,7 +267,7 @@ def product():
                 text = text.rstrip(" บาท")
                 e_pro.insert(0, text[26:])
             e_pro.pack(side=LEFT)
-            submit_edit_pro = Button(edit_pro, text='ยืนยัน', command=lambda : edit_pro_to_db(listbox_pro.get(ACTIVE)),font=("Kanit", 13)).pack()
+            submit_edit_pro = Button(edit_pro, text='ยืนยัน', command=lambda : edit_pro_to_db(listbox_pro.get(ACTIVE)),font=("TH Sarabun New", 15)).pack()
 
 
     def delete_pro_from_db():
@@ -281,6 +281,8 @@ def product():
         show_products()
         set_cate()
         pro_id_def()
+        set_pro()
+        
 
 
     def delete_pro_command():
@@ -291,12 +293,12 @@ def product():
             delete_pro = Toplevel()
             delete_pro.title("Edit Products")
             global e_pro_delete
-            Label(delete_pro, text="ระบุรหัสสินค้า",font=("Kanit", 13)).pack(side=LEFT)
-            e_pro_delete = Entry(delete_pro, width=20,font=("Kanit", 13))
+            Label(delete_pro, text="ระบุรหัสสินค้า",font=("TH Sarabun New", 15)).pack(side=LEFT)
+            e_pro_delete = Entry(delete_pro, width=20,font=("TH Sarabun New", 15))
             e_pro_delete_id = Entry
             e_pro_delete.insert(0, text[27:])
             e_pro_delete.pack(side=LEFT)
-            submit_edit_pro = Button(delete_pro, text='ลบสินค้า', command=delete_pro_from_db,font=("Kanit", 13)).pack()
+            submit_edit_pro = Button(delete_pro, text='ลบสินค้า', command=delete_pro_from_db,font=("TH Sarabun New", 15)).pack()
         else:
             messagebox.showerror("Error", "กรุณาระบุรหัสสินค้า")
 
@@ -306,15 +308,12 @@ def product():
         global products_showing
         products_showing = Toplevel()
         products_showing.title("Product Showing")
-        category_from_db = "SELECT productsName FROM products "
-        mycursor.execute(category_from_db)
-        name_data = mycursor.fetchall()
         products_showing.geometry("500x300")
         scrollbar = Scrollbar(products_showing)
-        scrollbar.pack(side=RIGHT, fill=Y)
+        scrollbar.pack(side=LEFT, fill=Y)
 
         global listbox_pro
-        listbox_pro = Listbox(products_showing, yscrollcommand=scrollbar.set,font=("Kanit", 12))
+        listbox_pro = Listbox(products_showing, yscrollcommand=scrollbar.set,font=("TH Sarabun New", 14))
         product_from_db = "SELECT * FROM products "
         mycursor.execute(product_from_db)
         product_data = mycursor.fetchall()
@@ -337,8 +336,8 @@ def product():
 
         scrollbar.config(command=listbox_pro.yview)
 
-        Button(products_showing,text="แก้ไขสินค้า",command= edit_pro_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
-        Button(products_showing,text="ลบสินค้า",command= delete_pro_command ,font=("Kanit", 12),bg='white',fg='gray20',relief="raised",width=20,padx=1).pack()
+        Button(products_showing,text="แก้ไขสินค้า",command= edit_pro_command ,font=("TH Sarabun New", 14),bg='white',relief="raised",width=20,padx=1).pack()
+        Button(products_showing,text="ลบสินค้า",command= delete_pro_command ,font=("TH Sarabun New", 14),bg='white',relief="raised",width=20,padx=1).pack()
 
 
     def add_products():
@@ -359,10 +358,11 @@ def product():
             name.delete(0, END)
             buy.delete(0, END)
             sell.delete(0, END)
+            set_pro()
+            
 
-    products_show_btn = Button(product_win, text="แสดงสินค้า", command= show_products,font=("Kanit", 12),fg='gray20',bg='steelblue2',relief="raised",width=15,padx=1).grid(row=3,column=2,columnspan=1)
-    products_add_btn = Button(product_win, text="เพิ่มสินค้า", command= add_products ,font=("Kanit", 12),fg='gray20',bg='goldenrod1',relief="raised",width=15,padx=1).grid(row=3,column=4,columnspan=1)
+    products_show_btn = Button(product_win, text="แสดงสินค้า", command= show_products,font=("TH Sarabun New", 14),bg='steelblue2',relief="raised",width=15,padx=1).grid(row=3,column=2,columnspan=1)
+    products_add_btn = Button(product_win, text="เพิ่มสินค้า", command= add_products ,font=("TH Sarabun New", 14),bg='goldenrod1',relief="raised",width=21,padx=1).grid(row=3,column=4,columnspan=1)
 
     product_win.mainloop()
 
-product()

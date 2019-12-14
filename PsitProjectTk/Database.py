@@ -16,7 +16,11 @@ mydb = mysql.connect(
 global mycursor
 mycursor = mydb.cursor()
 
-# sql = "ALTER TABLE products ADD productsId INT(11) AUTO_INCREMENT PRIMARY KEY FIRST"
+# sql = "ALTER TABLE basket ADD productId INT(11) FIRST"
+# mycursor.execute(sql)
+# mydb.commit()
+
+# sql = "ALTER TABLE basket DROP COLUMN productId"
 # mycursor.execute(sql)
 # mydb.commit()
 
@@ -32,12 +36,13 @@ mycursor = mydb.cursor()
 # mycursor.execute(sql)
 # mydb.commit()
 
-# sql = "DELETE FROM products WHERE category='dasdasd'"
+# sql = "DELETE FROM basket"
 # mycursor.execute(sql)
 # mydb.commit()
 
-# sql = "CREATE TABLE prepareCate (categoryShow VARCHAR(30))"
+# sql = "CREATE TABLE basket (productId INT(5) AUTO_INCREMENT PRIMARY KEY, productName VARCHAR(25), category VARCHAR(25), sell FLOAT(25), afterSold INT(25))"
 # mycursor.execute(sql)
+# print("finish")
 # mydb.commit()
 
 # sql = "INSERT INTO products (productsId, productsName, category, buy, sell, beforeSold, afterSold) VALUES (%s, %s, %s,%s ,%s, %s, %s)"
