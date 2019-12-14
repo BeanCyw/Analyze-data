@@ -228,7 +228,7 @@ def product():
         elif "ราคาขาย" in text:
             text = text[26:]
             text = text.rstrip(" บาท")
-            sql = "UPDATE products SET sell = '" + e_pro.get() + "'WHERE sells= '" + text + "'"
+            sql = "UPDATE products SET sell = '" + e_pro.get() + "'WHERE sell= '" + text + "'"
             mycursor.execute(sql)
             mydb.commit()
 

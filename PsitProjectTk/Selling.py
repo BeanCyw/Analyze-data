@@ -52,7 +52,7 @@ def product_show():
     product_showing.geometry("500x300+980+100")
     scrollbar = Scrollbar(product_showing)
     scrollbar.pack(side=RIGHT, fill=Y)
-    Label(product_showing,text="คลิกรหัสสินค้าเพื่อเลือก",font=("TH Sarabun New", 20),width=20,padx=1, anchor=W).pack()
+    Label(product_showing,text="คลิกรหัสสินค้าเพื่อเลือก",font=("TH Sarabun New", 20),width = 20,padx = 1, anchor = W).pack()
 
     global listbox_to_basket
     listbox_to_basket = Listbox(product_showing, yscrollcommand=scrollbar.set,font=("TH Sarabun New", 14))
