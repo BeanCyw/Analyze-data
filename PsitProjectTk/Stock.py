@@ -3,13 +3,9 @@ from tkinter import *
 from tkinter import messagebox
 import AddProductsButton as apb
 
-# Connecting to the database
-
-# importing 'mysql.connector' as mysql for convenient
 import mysql.connector as mysql
 
-# connecting to the database using 'connect()' method
-# it takes 3 required parameters 'host', 'user', 'passwd'
+
 global mydb
 mydb = mysql.connect(
     host="localhost",
@@ -67,8 +63,6 @@ def set_pro():
     product_from_db = "SELECT * FROM products "
     mycursor.execute(product_from_db)
     product_data = mycursor.fetchall()
-    print(product_data)
-    print("do set pro func")
     return product_data
 
 

@@ -1,13 +1,8 @@
 """Manage Selling"""
 from tkinter import *
 from tkinter import messagebox
-# Connecting to the database
-
-# importing 'mysql.connector' as mysql for convenient
 import mysql.connector as mysql
 
-# connecting to the database using 'connect()' method
-# it takes 3 required parameters 'host', 'user', 'passwd'
 global mydb
 mydb = mysql.connect(
     host="localhost",
@@ -28,7 +23,7 @@ def selling():
     selling_showing.title("Selling Showing")
     selling_showing.geometry("800x700+400+60")
     basket_show()
-    Label(selling_showing, text="เลือกสินค้าตะกร้า",
+    Label(selling_showing, text="เลือกประเภทสินค้า",
           font=("TH Sarabun New", 24+10), width=15, padx=1).pack()
     category_show()
     submit_button = Button(selling_showing, text='ยืนยัน', command=lambda:
@@ -241,12 +236,10 @@ def set_basket():
 def finish_sell():
     """finish sell"""
     mydb.commit()
-    # print(basket)
     if basket == []:
         messagebox.showwarning("Warning", "ไม่พบสินค้าในตะกร้า")
     else:
         for data in basket:
-            # print(data)
             sql = "UPDATE products SET afterSold = afterSold - ' " + \
                 str(data[5]) + "'WHERE productsId= '" + str(data[0]) + "'"
             mycursor.execute(sql)

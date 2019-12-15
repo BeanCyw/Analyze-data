@@ -1,11 +1,8 @@
+"""file to prepare database"""
 from tkinter import *
-## Connecting to the database
-
-## importing 'mysql.connector' as mysql for convenient
 import mysql.connector as mysql
 
-## connecting to the database using 'connect()' method
-## it takes 3 required parameters 'host', 'user', 'passwd'
+
 global mydb
 mydb = mysql.connect(
     host = "localhost",
