@@ -21,7 +21,7 @@ def selling():
     global selling_showing
     selling_showing = Toplevel()
     selling_showing.title("Selling Showing")
-    selling_showing.geometry("800x700+400+60")
+    selling_showing.geometry("1000x700+400+60")
     basket_show()
     Label(selling_showing, text="เลือกประเภทสินค้า",
           font=("TH Sarabun New", 24+10), width=15, padx=1).pack()

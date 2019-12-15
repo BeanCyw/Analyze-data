@@ -74,7 +74,6 @@ def analyze():
         plt.rcParams['font.size'] = 20
 
         df = df.sort_values(by=['Profit'], ascending=False)
-        print(len(df))
         global len_of_data
         len_of_data = df['Profit'].head(5)[df['Profit'] != 0]
 
